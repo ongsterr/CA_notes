@@ -37,6 +37,8 @@ See for more info: https://en.wikipedia.org/wiki/Factory_Bot_(Rails_Testing)
 > Behavior-driven development specifies that tests of any unit of software should be specified in terms of the desired behavior of the unit. Borrowing from agile software development the "desired behavior" in this case consists of the requirements set by the business — that is, the desired behavior that has business value for whatever entity commissioned the software unit under construction. Within BDD practice, this is referred to as BDD being an "outside-in" activity.\
 See: https://en.wikipedia.org/wiki/Behavior-driven_development
 
+- An interesting gem called **Hirb** that provides a mini view framework for console applications and uses it to improve irb’s default inspect output. Hirb has useful default views for at least ten popular database gems i.e. Rails’ ActiveRecord::Base. ([readme doc](http://tagaholic.me/hirb/doc/index.html))
+
 ## Testing
 - Code written to test other codes
 - There are 2 types of software testing concepts/frameworks:
@@ -50,7 +52,7 @@ See: https://en.wikipedia.org/wiki/Behavior-driven_development
 
 ### When to Test?
 See excerpt from "Learn Just Enought to be Dangerous" series on Rails ([Rails tutorial box 3.3](https://www.railstutorial.org/book/static_pages)):
-```md
+```
 When deciding when and how to test, it’s helpful to understand why to test. In my view, writing automated tests has three main benefits:
 
 1. Tests protect against regressions, where a functioning feature stops working for some reason.
@@ -158,10 +160,10 @@ gem 'rspec', '~> 3.7'
 
 Back to the terminal:
 ```bash
-bundle install --binstubbs
+bundle install --binstubs
 ```
 
-What "binstubbs" does?
+What "binstubs" does?
 > Creates a directory (defaults to ~/bin) and place any executables from the gem there. These executables run in Bundler's context. If used, you might add this directory to your environment's PATH variable. For instance, if the rails gem comes with a rails executable, this flag will create a bin/rails executable that ensures that all referred dependencies will be resolved using the bundled gems.\
 Source: http://bundler.io/v1.10/man/bundle-install.1.html
 
@@ -368,3 +370,129 @@ Run your Guard:
 bundle exec guard
 ```
 Now everytime you make a change to person.rb, Guard is running your tests in the background!
+
+### Make a new Rails Project with RSpec
+Code along with Ruegen
+1. In the terminal:
+```bash
+cd ..
+rails new pharmacy
+```
+2. Follow the instruction below to install rspec-rails:\
+https://github.com/rspec/rspec-rails
+```
+# Gemfile
+group :development, :test do
+  gem 'rspec-rails', '~> 3.7'
+end
+```
+3. Back to the terminal:
+```bash
+bundle install
+```
+4. Initialize the ```spec/``` directory (where specs will reside) with:
+```
+rails generate rspec:install
+```
+5. Use the rspec command to run your specs
+```
+bundle exec rspec
+```
+6. Create a scaffold for your products:
+```
+rails g scaffold Product name:string price:integer description:text brand:string image_data:text
+```
+7. Run your migration:
+```
+bin/rails db:migrate
+```
+
+### Adding a column to your Model using migration with Rails
+Use the below command:
+```
+rails g migration AddTitleToProduct title
+```
+Interesting facts about Rails:
+- g is short for "generate"
+- "If the migration name is of the form “AddXXXToYYY” or “RemoveXXXFromYYY” and is followed by a list of column names and types then a migration containing the appropriate add_column and remove_column statements will be created."
+- ```AddColumnToTable``` in camelcase sets up the name of your migration
+- "title" is the name of the column (default type is string)
+- Rails adds "Title" column to table named ```table``` (based on what you name your migration)
+
+This generates a new migration:
+```ruby
+# This is automatically generated
+class addTitleToProduct < ActiveRecord::Migration[5.1]
+    def change
+        add_column :products, :title, :string
+    end
+end
+```
+Then run:
+```
+bin/rails db:migrate
+```
+For more details, see: http://guides.rubyonrails.org/v3.2/migrations.html
+
+### RSpec "Model" Test
+1. Open ```/spec/models/product_spec.rb```\
+Note: This file should have already been generated when you bundle generateed and executed rspec
+
+2. Write the below test:
+```ruby
+require 'rails_helper'
+
+RSpec.describe Product, type: :model do
+    it 'should have product name' do
+        product = Product.new title: 'Centrum Advance'
+        result = product.title
+        expect(result).to eq('Centrum Advance')
+    end
+end
+```
+3. Run your model tests: ```bundle exec rspec spec/models```
+
+## ActiveRecord Validations
+Another test was written for the Product "Model"
+```ruby
+RSpec.describe Product, type: :model do
+    it 'should have product name' do
+        product = Product.new title: 'Centrum Advance'
+        result = product.title
+        expect(result).to eq('Centrum Advance')
+    end
+
+    it 'should validate product title' do
+        result = Product.new().valid?
+        expect(result).to eq(false)
+        assert(Product.new().invalid?))
+    end
+end
+```
+
+The new test failed:
+```
+Failed examples:
+rspec ./spec/models/product_spec.rb:10 # Product should validate product title
+```
+To get the test to pass, Ruegen opened ```app/models/products.rb``` and added a validation:
+```ruby
+class Product < ApplicationRecord
+    validates :title, presence: true
+end
+```
+and this now passes!!!
+```
+Finished in 0.03707 seconds (files took 4.43 seconds to load)
+2 examples, 0 failures
+```
+Read the docs for more info: http://guides.rubyonrails.org/active_record_validations.html
+
+### Exercise 3
+Using the docs for validations, write: a) tests & b) validations for:
+1. Description has more than 5 words
+2. Price is present
+3. Price is integer
+4. Brand is valid
+
+Note from Nat: I have written my tests & validations, but I'm 99.99% sure there is a better way to do this. I'll need to re-read validations docs & guide to writing good rspecs.
