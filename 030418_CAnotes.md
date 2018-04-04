@@ -1,5 +1,4 @@
 ## Topics Covered
----
 - Testing
     - What is testing?
     - Why is it important?
@@ -9,11 +8,9 @@
 - What is Guard? Setting up Guard.
 
 ## Revision
----
 - Ruby classes (very brief revsion)
 
 ## We learnt the existence of these things, but not how to use it
----
 - What is meant by "**Extreme Programming**"?
 > Extreme programming (XP) is a software development methodology which is intended to improve software quality and responsiveness to changing customer requirements. As a type of agile software development, it advocates frequent "releases" in short development cycles, which is intended to improve productivity and introduce checkpoints at which new customer requirements can be adopted.\
 See: http://www.extremeprogramming.org/
@@ -41,7 +38,6 @@ See for more info: https://en.wikipedia.org/wiki/Factory_Bot_(Rails_Testing)
 See: https://en.wikipedia.org/wiki/Behavior-driven_development
 
 ## Testing
----
 - Code written to test other codes
 - There are 2 types of software testing concepts/frameworks:
     - [Test Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven_development)
@@ -53,7 +49,6 @@ See: https://en.wikipedia.org/wiki/Behavior-driven_development
     - https://hackernoon.com/your-guide-to-testing-in-ruby-on-rails-5-c8bd122e38ad
 
 ### When to Test?
----
 See excerpt from "Learn Just Enought to be Dangerous" series on Rails ([Rails tutorial box 3.3](https://www.railstutorial.org/book/static_pages)):
 ```md
 When deciding when and how to test, it’s helpful to understand why to test. In my view, writing automated tests has three main benefits:
@@ -78,7 +73,6 @@ In practice, the guidelines above mean that we’ll usually write controller and
 ```
 
 ### Gems/Modules for Testing in Ruby
----
 1. [test-unit](https://rubygems.org/gems/test-unit)
 > Good docs for test-units:\
 http://www.rubydoc.info/github/test-unit/test-unit/Test/Unit/Assertions\
@@ -94,7 +88,6 @@ http://docs.seattlerb.org/minitest/Minitest/Assertions.html
     - Here is how to write better specs (approved by Ruegen) - http://www.betterspecs.org/
 
 ### Exercises
----
 #### Exercise #1
 1. Complete the morning challenge:
 ```Ruby
@@ -150,7 +143,6 @@ See solution in utility_methods.rb\
 For more info on ```test::unit``` module, visit https://test-unit.github.io/test-unit/en/Test/Unit.html.
 
 ### RSpec
----
 Code-along-with-Ruegen exercise\
 It is pretty much code along with http://rspec.info/ - just watch the videos and code along.
 
@@ -282,7 +274,6 @@ Usage: rspec [options] [files or directories]
 ```
 
 ### Let's Install Guard
----
 What is [Guard](https://github.com/guard/guard)?
 
 "Guard automates various tasks by running custom rules whenever file or directories are modified."
