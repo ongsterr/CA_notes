@@ -1,4 +1,4 @@
-
+## Chapter 1: From Zero to Deploy
 ## **Deploying**
 What are some of the options to deploy a Rails application?
 - Shared hosts or virtual private servers running [Phusion Passenger](https://www.phusionpassenger.com/) (a module for the Apache and Nginx web servers)
