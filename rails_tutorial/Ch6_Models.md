@@ -190,19 +190,19 @@ validates :name,  presence: true, length: { maximum: 50 }
 
 ### **Format Validation**
 Table outlining regular expression:
-Expressions | Meaning
--------------|--------
-/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i | full regex
-/ | start of regex
-\A | match start of a string
-[\w+\-.]+ | at least one character, plus, hyphen or dot
-@ | literal "@" sign
-[a-z\d\-.]+ | at least one letter, digit, hyphen, or dot
-\. | literal dot
-[a-z]+ | at least one letter
-\z | match end of string
-/ | end of regex
-i | case-insensitive
+| Expressions | Meaning |
+|-------------|---------|
+| /\A[\w+\\-.]+@[a-z\d\\-.]+\\.[a-z]+\z/i | full regex |
+| / | start of regex |
+| \A | match start of a string |
+| [\w+\\-.]+ | at least one character, plus, hyphen or dot |
+| @ | literal "@" sign |
+| [a-z\d\\-.]+ | at least one letter, digit, hyphen, or dot |
+| \\. | literal dot |
+| [a-z]+ | at least one letter |
+| \z | match end of string |
+| / | end of regex |
+| i | case-insensitive |
 
 Learn regular expression using [Rubular](http://www.rubular.com/)
 
