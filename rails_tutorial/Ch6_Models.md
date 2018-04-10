@@ -186,33 +186,32 @@ validates :name,  presence: true, length: { maximum: 50 }
 
 2.4.1 :004 > user.errors.full_messages
  => ["Name is too long (maximum is 50 characters)", "Email can't be blank"]
- ```
+```
 
- ### **Format Validation**
- Table outlining regular expression:
- | Expressions | Meaning |
- |-------------|---------|
- | /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i | full regex |
- | / | start of regex |
- | \A | match start of a string |
- | [\w+\-.]+ | at least one character, plus, hyphen or dot |
- | @ | literal "@" sign |
- | [a-z\d\-.]+ | at least one letter, digit, hyphen, or dot |
- | \. | literal dot |
- | [a-z]+ | at least one letter |
- | \z | match end of string |
- | / | end of regex |
- | i | case-insensitive |
- | |
+### **Format Validation**
+Table outlining regular expression:
+| Expressions | Meaning |
+|:-------------|:---------|
+| /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i | full regex |
+| / | start of regex |
+| \A | match start of a string |
+| [\w+\-.]+ | at least one character, plus, hyphen or dot |
+| @ | literal "@" sign |
+| [a-z\d\-.]+ | at least one letter, digit, hyphen, or dot |
+| \. | literal dot |
+| [a-z]+ | at least one letter |
+| \z | match end of string |
+| / | end of regex |
+| i | case-insensitive |
 
- Learn regular expression using [Rubular](http://www.rubular.com/)
+Learn regular expression using [Rubular](http://www.rubular.com/)
 
- Email format validation using regex:
- ```ruby
- VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
- VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
- ```
- **Exercises**
+Email format validation using regex:
+```ruby
+VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+```
+**Exercises**
  - By pasting in the valid addresses and invalid addresses into the test string area at Rubular, confirm that the regex matches all of the valid addresses and none of the invalid ones.
 ```irb
 2.4.1 :001 > user = User.new(name: "Hello", email: "user@example,com")
