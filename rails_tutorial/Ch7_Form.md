@@ -395,6 +395,7 @@ flunk( [msg] ) |	Ensures failure. This is useful to explicitly mark a test that 
 The above are a subset of assertions that minitest supports. For an exhaustive & more up-to-date list, please check [Minitest API documentation](http://docs.seattlerb.org/minitest/), specifically ```Minitest::Assertions```.
 
 **Rails** adds some custom assertions of its own to the ```minitest framework```:
+
 | Assertion |	Purpose |
 |---|---|
 | assert_difference(expressions, difference = 1, message = nil) {...} |	Test numeric difference between the return value of an expression as a result of what is evaluated in the yielded block. |
