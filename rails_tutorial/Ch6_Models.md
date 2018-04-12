@@ -329,7 +329,7 @@ validates(:password, presence: true, length: { minimum: 6 })
 2.4.1 :003 > user.errors.full_messages
  => ["Password is too short (minimum is 6 characters)"]
 ```
-### **Creating and Authenticating a User
+### **Creating and Authenticating a User**
 To check the effects of adding ```has_secure_password``` to the User model:
 ```irb
 2.4.1 :001 > user = User.new(name: "Chris", email: "chris@email.com", password: "hello", password_confirmation: "hello")
