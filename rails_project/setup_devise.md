@@ -3,6 +3,10 @@
 ### **Setup for `Omni-Auth-Google`**
 1. Define your application id and secret in `config/initializers/devise.rb`. Configuration options can be passed as the last parameter here as key/value pairs.
     ```ruby
+    # Gemfile
+    gem 'omniauth-google-oauth2'
+    ```
+    ```ruby
     config.omniauth :google_oauth2, 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', {}
     ```
 2. Specify your `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in your `.env` file. Follow the instructions [here](https://richonrails.com/articles/google-authentication-in-ruby-on-rails/) to setup Google API for ominiauth.
@@ -102,7 +106,7 @@
     - When a valid user is found, they can be signed in with one of two Devise methods: `sign_in` or `sign_in_and_redirect`. Passing `:event => :authentication` is optional. You should only do so if you wish to use [Warden callbacks](https://stackoverflow.com/questions/9221390/what-does-event-authentication-do/13389324#13389324).
     - A flash message can also be set using one of Devise's default messages, but that is up to you.
     - In case the user is not persisted, we store the OmniAuth data in the session. Notice we store this data using "devise." as key namespace. This is useful because Devise removes all the data starting with "devise." from the session whenever a user signs in, so we get automatic session clean up. At the end, we redirect the user back to our registration form.
-7. Then, create the `from_omniauth` method to bind to or create the user
+7. Then, create the `from_omniauth` method to bind to or create the user in `models/user.rb`:
     ```ruby
     def self.from_omniauth(access_token)
         data = access_token.info
@@ -118,7 +122,7 @@
         user
     end
     ```
-    Alternatively, you can also code as the below:
+    Alternatively, you can also code as the below. *But you have to fix it first!*:
     ```ruby
     def self.from_omniauth(auth)
         where(provider: auth.provider, uid: auth.uid).first_or_create! do |user|
