@@ -392,8 +392,8 @@
     - When we use modern features of the language, some engines may fail to support such code. Just as said, not all features are implemented everywhere.
     - [Babel](https://babeljs.io/) is a [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler). It rewrites modern JavaScript code into the previous standard.
     - There are two parts in Babel:
-        - First, the transpiler program, which rewrites the code. The developer runs it on his own computer. It rewrites the code into the older standard. And then the code is delivered to the website for users. Modern project build system like webpack or brunch provide means to run transpiler automatically on every code change, so that doesn’t involve any time loss from our side.
-        - Second, the polyfill.
+        - First, the `transpiler program`, which rewrites the code. The developer runs it on his own computer. It rewrites the code into the older standard. And then the code is delivered to the website for users. Modern project build system like webpack or brunch provide means to run transpiler automatically on every code change, so that doesn’t involve any time loss from our side.
+        - Second, the `polyfill`.
             - The transpiler rewrites the code, so syntax features are covered. But for new functions we need to write a special script that implements them. JavaScript is a highly dynamic language, scripts may not just add new functions, but also modify built-in ones, so that they behave according to the modern standard.
             - There’s a term “polyfill” for scripts that “fill in” the gap and add missing implementations.
         - We need to setup the `transpiler` and add the `polyfill` for old engines to support modern features.
