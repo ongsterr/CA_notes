@@ -495,3 +495,327 @@
     - `Symbol.toPrimitive`
 
 ## **Object Methods, "this"**
+
+**Summary**
+- Functions that are stored in object properties are called “methods”.
+- Methods allow objects to “act” like `object.doSomething()`.
+- Methods can reference the object as `this`.
+- The value of `this` is defined at run-time.
+- When a function is declared, it may use `this`, but that `this` has no value until the function is called.
+- That function can be copied between objects.
+- When a function is called in the “method” syntax: `object.method()`, the value of `this` during the call is `object`.
+- Arrow functions are special: they have no `this`. When `this` is accessed inside an arrow function, it is taken from outside.
+
+### **Method Example**
+
+- A function that is the property of an object is called its method.
+- **Object-oriented programming**
+
+### **Method Shorthand**
+
+- Shorter syntax for methods in an object literal:
+    ```js
+    // method shorthand looks better, right?
+    let user = {
+        sayHi() { // same as "sayHi: function()"
+            alert("Hello");
+        }
+    };
+    ```
+
+### **“this” in Methods**
+
+- An object method needs to access the information stored in the object to do its job
+- **To access the object, a method can use the this keyword.**
+    - The value of this is the object “before dot”, the one used to call the method.
+
+### **“this” is not bound**
+
+- In JavaScript, “`this`” keyword behaves unlike most other programming languages. First, it can be used in any function.
+- The value of `this` is evaluated during the run-time. And it can be anything.
+- Actually, we can call the function without an object at all:
+    ```js
+    function sayHi() {
+        alert(this);
+    }
+
+    sayHi(); // undefined
+    ```
+    - In this case this is `undefined` in strict mode. If we try to access `this.name`, there will be an error.
+    - In non-strict mode (if one forgets `use strict`) the value of `this` in such case will be the global object (`window` in a browser, we’ll get to it later). This is a historical behavior that "`use strict`" fixes.
+- **Note** that usually a call of a function that uses `this` without an object is not normal, but rather a programming mistake. If a function has `this`, then it is usually meant to be called in the context of an object.
+- In JavaScript `this` is “free”, its value is evaluated at call-time and does not depend on where the method was declared, but rather on what’s the object “before the dot”.
+- The concept of run-time evaluated `this` has both pluses and minuses. On the one hand, a function can be reused for different objects. On the other hand, greater flexibility opens a place for mistakes.
+
+### **Internals: Reference Type**
+
+- An intricate method call can lose `this`:
+    ```js
+    let user = {
+        name: "John",
+        hi() { alert(this.name); },
+        bye() { alert("Bye"); }
+    };
+
+    user.hi(); // John (the simple call works)
+
+    // now let's call user.hi or user.bye depending on the name
+    (user.name == "John" ? user.hi : user.bye)(); // Error!
+    ```
+    - You can see that the call results in an error, cause the value of "this" inside the call becomes `undefined`.
+    - Looking closely, we may notice two operations in `obj.method()` statement:
+        - First, the dot `'.'` retrieves the property `obj.method`.
+        - Then parentheses `()` execute it.
+    - **To make `user.hi()` calls work, JavaScript uses a trick – the dot `'.'` returns not a function, but a value of the special Reference Type.**
+- The value of Reference Type is a three-value combination `(base, name, strict)`, where:
+    - `base` is the object.
+    - `name` is the property.
+    - `strict` is true if `use strict` is in effect.
+
+### **Arrow functions have no “this”**
+
+- Arrow functions are special: they don’t have their “own” this. If we reference `this` from such a function, it’s taken from the outer “normal” function.
+- Here `arrow()` uses `this` from the outer `user.sayHi()` method:
+    ```js
+    let user = {
+        firstName: "Ilya",
+        sayHi() {
+            let arrow = () => alert(this.firstName);
+            arrow();
+        }
+    };
+
+    user.sayHi(); // Ilya
+    ```
+    - That’s a special feature of arrow functions, it’s useful when we actually do not want to have a separate `this`, but rather to take it from the outer context.
+
+## **Object to Primitive Conversion**
+
+- What happens when objects are added `obj1 + obj2`, subtracted `obj1 - obj2` or printed using `alert(obj)`?
+- The numeric conversion happens when we subtract objects or apply mathematical functions.
+    - For instance, `Date` objects (to be covered in the chapter Date and time) can be subtracted, and the result of `date1 - date2` is the time difference between two dates.
+
+### **ToPrimitive**
+
+- When an object is used in the context where a primitive is required, for instance, in an `alert` or mathematical operations, it’s converted to a primitive value using the `ToPrimitive` algorithm (specification).
+- There are three variants:
+    - `"string"`
+    - `"number"`
+    - `"default"`
+- **To do the conversion, JavaScript tries to find and call three object methods:**
+    1. Call `obj[Symbol.toPrimitive](hint)` if the method exists,
+    2. Otherwise if hint is `"string"`
+        - try `obj.toString()` and `obj.valueOf()`, whatever exists.
+    3. Otherwise if hint is `"number"` or `"default"`
+        - try `obj.valueOf()` and `obj.toString()`, whatever exists.
+
+### **symbol.toPrimitive**
+
+- There’s a built-in symbol named `Symbol.toPrimitive` that should be used to name the conversion method:
+    ```js
+    let user = {
+        name: "John",
+        money: 1000,
+
+        [Symbol.toPrimitive](hint) {
+            alert(`hint: ${hint}`);
+            return hint == "string" ? `{name: "${this.name}"}` : this.money;
+        }
+    };
+
+    // conversions demo:
+    alert(user); // hint: string -> {name: "John"}
+    alert(+user); // hint: number -> 1000
+    alert(user + 500); // hint: default -> 1500
+    ```
+
+### **toString/valueOf**
+
+- If there’s no `Symbol.toPrimitive` then JavaScript tries to find them and try in the order:
+    - `toString -> valueOf` for “string” hint.
+    - `valueOf -> toString` otherwise.
+    ```js
+    let user = {
+        name: "John",
+        money: 1000,
+
+        // for hint="string"
+        toString() {
+            return `{name: "${this.name}"}`;
+        },
+
+        // for hint="number" or "default"
+        valueOf() {
+            return this.money;
+        }
+
+    };
+
+    alert(user); // toString -> {name: "John"}
+    alert(+user); // valueOf -> 1000
+    alert(user + 500); // valueOf -> 1500
+    ```
+
+### **ToPrimitive and ToString/ToNumber**
+
+- The important thing to know about all primitive-conversion methods is that they do not necessarily return the “hinted” primitive.
+- **The only mandatory thing: these methods must return a primitive.**
+- Mathematical operations (except binary plus) perform ToNumber conversion:
+    ```js
+    let obj = {
+        toString() { // toString handles all conversions in the absence of other methods
+            return "2";
+        }
+    };
+
+    alert(obj * 2); // 4, ToPrimitive gives "2", then it becomes 2
+    ```
+- `Binary plus` checks the primitive – if it’s a string, then it does concatenation, otherwise it performs `ToNumber` and works with numbers.
+    ```js
+    let obj = {
+        toString() {
+            return "2";
+        }
+    };
+
+    alert(obj + 2); // 22 (ToPrimitive returned string => concatenation)
+    ```
+    ```js
+    let obj = {
+        toString() {
+            return true;
+        }
+    };
+
+    alert(obj + 2); // 3 (ToPrimitive returned boolean, not string => ToNumber)
+    ```
+- **Historical notes**
+    - For historical reasons, methods `toString` or `valueOf` should return a primitive: if any of them returns an object, then there’s no error, but that object is ignored (like if the method didn’t exist).
+    - In contrast, `Symbol.toPrimitive` must return a primitive, otherwise, there will be an error.
+
+## **Constructor, operator "new"**
+
+- The regular `{...}` syntax allows to create one object. But often we need to create many similar objects, like multiple users or menu items and so on.
+
+### **Constructor Function**
+
+- `Constructor functions` technically are regular functions. There are two conventions though:
+    - They are named with *capital letter* first.
+    - They should be executed only with "new" operator.
+
+    ```js
+    function User(name) {
+        this.name = name;
+        this.isAdmin = false;
+    }
+
+    let user = new User("Jack");
+
+    alert(user.name); // Jack
+    alert(user.isAdmin); // false
+    ```
+- When a function is executed as `new User(...)`, it does the following steps:
+    - A new empty object is created and assigned to `this`.
+    - The function body executes. Usually it modifies `this`, adds new properties to it.
+    - The value of `this` is returned.
+- Now if we want to create other users, we can call `new User("Ann")`, `new User("Alice")` and so on. Much shorter than using literals every time, and also easy to read.
+    - **Main purpose of constructors – to implement reusable object creation code.**
+- **new function() { … }**
+    ```js
+    let user = new function() {
+        this.name = "John";
+        this.isAdmin = false;
+
+        // ...other code for user creation
+        // maybe complex logic and statements
+        // local variables etc
+    };
+    ```
+    - The constructor can’t be called again, because it is not saved anywhere, just created and called. So this trick aims to encapsulate the code that constructs the single object, without future reuse.
+
+### **Dual-syntax constructors: new.target**
+
+- Inside a function, we can check whether it was called with `new` or without it, using a special `new.target` property.
+- It is empty for regular calls and equals the function if called with `new`:
+    ```js
+    function User() {
+        alert(new.target);
+    }
+
+    // without new:
+    User(); // undefined
+
+    // with new:
+    new User(); // function User { ... }
+    ```
+- That can be used to allow both `new` and regular syntax to work the same:
+    ```js
+    function User(name) {
+        if (!new.target) { // if you run me without new
+            return new User(name); // ...I will add new for you
+    }
+
+        this.name = name;
+    }
+
+    let john = User("John"); // redirects call to new User
+    alert(john.name); // John
+    ```
+- This approach is sometimes used in libraries to make the syntax more flexible.
+
+### **Return from Constructors**
+
+- Usually, constructors do not have a `return` statement. Their task is to write all necessary stuff into `this`, and it automatically becomes the result.
+- But if there is a `return` statement, then the rule is simple:
+    - If `return` is called with object, then it is returned instead of `this`.
+    - If `return` is called with a primitive, it’s ignored.
+    - Summary: `return` with an object returns that object, in all other cases `this` is returned.
+    ```js
+    function BigUser() {
+        this.name = "John";
+        return { name: "Godzilla" };  // <-- returns an object
+    }
+
+    alert( new BigUser().name );  // Godzilla, got that object ^^
+
+    // empty return
+
+    function SmallUser() {
+        this.name = "John";
+        return; // finishes the execution, returns this
+    // ...
+    }
+
+    alert( new SmallUser().name );  // John
+    ```
+- **Omitting parentheses**
+    ```js
+    let user = new User; // <-- no parentheses
+    // same as
+    let user = new User();
+    ```
+
+### **Methods in constructor**
+
+- Using constructor functions to create objects gives a great deal of flexibility. The constructor function may have parameters that define how to construct the object, and what to put in it.
+- we can add to `this` not only properties, but methods as well.
+    ```js
+    function User(name) {
+        this.name = name;
+
+        this.sayHi = function() {
+            alert( "My name is: " + this.name );
+        };
+    }
+
+    let john = new User("John");
+
+    john.sayHi(); // My name is: John
+
+    /*
+    john = {
+        name: "John",
+        sayHi: function() { ... }
+    }
+    */
+    ```
